@@ -1,7 +1,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 from config import BASE_URL, OUTPUT_DIR
@@ -29,11 +29,9 @@ class WebScraper:
             page_path = get_output_path(self.output_dir, url)
             create_directory_if_not_exists(os.path.dirname(page_path))
 
-            # Convert relative links to absolute links within the page
-            base_url = f'file://{os.path.abspath(self.output_dir)}/'
-            for a in soup.find_all('a'):
-                if not a['href'].startswith(('http', 'https', 'file')):
-                    a['href'] = urljoin(base_url, a['href'])
+            # Add a base tag to set the base URL for relative links
+            base_tag = soup.new_tag("base", href=url)
+            soup.head.insert(0, base_tag)
 
             with open(page_path, 'w', encoding='utf-8') as file:
                 file.write(soup.prettify())
@@ -44,7 +42,6 @@ class WebScraper:
                 img_path = get_output_path(self.output_dir, img_url)
                 create_directory_if_not_exists(os.path.dirname(img_path))
                 self.download_file(img_url, img_path)
-
 
     def scrape_website(self, url):
         response = self.session.get(url)
