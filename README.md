@@ -17,7 +17,7 @@ Web Scraper is a Python application for recursively scraping web pages from a ta
 
 1. Clone this repository:
 ```
-git clone https://github.com/yourusername/web-scraper.git
+git clone https://github.com/shanky249/web-scraper.git
 ```
 
 2. Navigate to the project directory:
